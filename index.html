@@ -24,6 +24,9 @@
 	.blue {
 		color: #AAAAFF;
 	}
+	.yellow {
+		color: #FAFA99;
+	}
 </style>
 		<!-- Printing and PDF exports -->
 		<script>
@@ -81,24 +84,55 @@
 					<section>
 						<h2>Deux sortes de générateurs</h2>
 						<ul>
-							<li>Les générateurs de type "pseudo-random"</li>
-							<li>Les générateurs de type "pseudo-random"</li>
+							<li>Les générateurs de type <span class="yellow">pseudo-random</span></li>
+							<li>Les générateurs de type <span class="blue">true random</span></li>
 						</ul>
 
-						<p>Les premiers sont basés sur une formule mathématique, les seconds utilisent un pool d'entropie (bruit collecté au niveau du système d'exploitation)</p>
+						<p>Les premiers sont basés sur une <b class="yellow">formule mathématique</b>, les seconds utilisent 
+							un <b class="blue">pool d'entropie</b> (bruit collecté au niveau du système d'exploitation)
+							ou du <b class="blue">matériel externe</b> (ondes radio, Lavarand, etc)
+						</p>
 					</section>
 
 					<section>
 						<h2>Evaluation</h2>
-						<p>Evaluation BSI
+						<p>Evaluation BSI (eq. allemand de l'ANSSI)
 						<ul>
-							<li>K1: les séquences de nombre <span class="blue">ne se répètent pas</span> (ou peu)</li>
-							<li>K2: propriétés <span class="blue">statistiques</span> identiques à celles d'un RNG idéal</li>
-							<li>K3: Impossible de deviner les valeurs suivantes ou antérieures à partir d'une sous-séquence</li>
-							<li>k4: Impossible de deviner les valeurs suivantes ou antérieures même en connaissant l'état interne du RNG</li>
+							<li><span class="yellow">K1</span>: les séquences de nombre <span class="blue">ne se répètent pas</span> (ou peu)</li>
+							<li><span class="yellow">K2</span>: propriétés <span class="blue">statistiques</span> identiques à celles d'un RNG idéal</li>
+							<li><span class="yellow">K3</span>: <span class="blue">Impossible de deviner</span> les valeurs suivantes ou antérieures à partir d'une sous-séquence</li>
+							<li><span class="yellow">K4</span>: <span class="blue">Impossible de deviner</span> les valeurs suivantes ou antérieures <span class="blue">même en connaissant l'état interne du RNG</span></li>
 						</ul>
-
 					</section>
+
+					<section>
+						<h2>Exemple: Algorithme MWC1616</h2>
+						<a href="https://gist.github.com/matthewmorrone1/3ded1f92f6c548b0310f">https://gist.github.com/matthewmorrone1/3ded1f92f6c548b0310f</a>
+						<pre style="background-color:#fff; color:#000; padding: 16px;">
+var MAX_RAND = Math.pow(2, 32);
+var state = [seed(), seed()];
+
+var mwc1616 = function mwc1616() {
+	var r0 = (18030 * (state[0] & 0xFFFF)) + (state[0] >>> 16) | 0;
+	var r1 = (36969 * (state[1] & 0xFFFF)) + (state[1] >>> 16) | 0;
+	state = [r0, r1];
+
+	var x = ((r0 << 16) + (r1 & 0xFFFF)) | 0;
+	if (x < 0) {
+		x = x + MAX_RAND;
+	}
+	return x / MAX_RAND;
+}
+							</pre>
+					</section>
+
+					<section>
+						<h2>Évaluation du MWC1616</h2>
+						<a href="https://adtmag.com/Blogs/Dev-Watch/2016/01/random-javascript-fix.aspx">https://adtmag.com/Blogs/Dev-Watch/2016/01/random-javascript-fix.aspx</a>
+						<p><img src="images/mwc1616.png">
+							<p>Corrigé sur chrome 49 (2016)
+					</section>
+
 				</section>
 
 				<section>
@@ -107,7 +141,11 @@
 					</section>
 
 					<section>
-						<h2>Combien de personnes doit-on réunir pour qu'il y ait une chance sur deux qu'il y ait deux personnes ayant le même jour d'anniversaire ?</h2>
+						<h5>Question</h2>
+						<hr>
+						<h3>
+							Quelle est la probabilité pour que dans un groupe de 23 personnes, au moins deux personnes aient le même jour anniversaire&nbsp;?
+						</h2>
 					</section>
 
 					<section>
@@ -132,6 +170,8 @@
 							<li>Compter et itérer</li>
 						</ul>
 						</p>
+						<p>Hint
+						<p><span class="yellow">Math.floor(Math.random() * 365)</span> = nombre entre 0 et 364, soit 365 possibilités
 					</section>
 
 				</section>
@@ -180,21 +220,22 @@
 					</section>
 
 					<section>
+
+						<div style="float:left; margin-left: -64px; margin-right:8px;">
+							<img src="images/monty-hall.png">
+						</div>
 						<p>
-							Le joueur est placé devant 3 portes fermés, Derrière l'une d'elle se trouve un prix, les deux autres n'ont rien du tout.
+							Le joueur est placé devant 3 portes fermés, l'une d'elle contient le trésor, les deux autres n'ont rien du tout.
 						</p>
 						<p>
 							Le joueur doit choisir une porte.
 						</p>
 						<p>
-							Ensuite l'animateur, qui sait où se trouve le prix, ouvre l'une des deux portes restantes et montre que le prix ne s'y trouve pas.
-							Le joueur peut alors choisir de garder son choix initial, ou changer de porte.
+							L'animateur, qui sait où se trouve le prix, ouvre une porte perdante parmis les deux restantes.
+							<br>Le joueur peut alors choisir de garder son choix initial, ou changer de porte.
 						</p>
-						<h3>
-							Question
-						</h3>
-						<p>
-							Le joueur doit-il garder sa porte, changer, ou bien est-ce que les probabilités restent identiques ?
+						<p class="yellow">
+							Le joueur doit-il garder sa porte, changer, ou bien est-ce que ça revient au même&nbsp;?
 						</p>
 					</section>
 
@@ -212,6 +253,7 @@
 							<img src="images/monty-hall.jpg">
 						</p>
 					</section>
+	
 				</section>
 
 				<section>
